@@ -1,3 +1,5 @@
+from drf_spectacular.types import OpenApiTypes
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -9,6 +11,12 @@ from main.services import get_data_from_db
 
 class WeatherInfoAPIView(APIView):
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("city", OpenApiTypes.STR, OpenApiParameter.QUERY),
+        ],
+        responses=WeatherInfoSerializer,
+    )
     def get(self, request, format=None):
         city_name = self.request.query_params.get('city')
 
