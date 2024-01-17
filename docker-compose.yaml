@@ -1,0 +1,42 @@
+version: '3'
+
+services:
+  db:
+    image: postgres
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - .env
+    environment:
+      - PGDATA=/var/lib/postgresql/data
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5434:5433"
+
+  app:
+    build:
+      context: .
+    tty: true
+    command: sh -c "python manage.py migrate && python manage.py fill_cities && python manage.py runserver 0.0.0.0:8080"
+    volumes:
+      - .:/app
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  bot:
+    build:
+      context: .
+    tty: true
+    command: python manage.py start_tg_bot
+    depends_on:
+      - app
+
+volumes:
+  pg_data:
