@@ -132,3 +132,5 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 YANDEX_KEY = os.getenv('YANDEX')
+
+TG_BOT = os.getenv('TG_BOT')
